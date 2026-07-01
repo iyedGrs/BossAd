@@ -1,0 +1,17 @@
+[project]
+name = "bossad-poc-agent"
+version = "0.1.0"
+description = "BossAd POC: mock ad-insight agent served by Aegra"
+requires-python = ">=3.12"
+dependencies = [
+    "aegra-cli>=0.1",
+    "langgraph>=1.0",
+    "langchain-openai>=1.0",
+    "python-dotenv>=1.0",
+]
+
+[dependency-groups]
+dev = ["pytest>=8.0"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
