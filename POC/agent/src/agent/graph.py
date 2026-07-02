@@ -14,16 +14,21 @@ if _missing:
         "Copy POC/agent/.env.example to POC/agent/.env and fill them in."
     )
 
-from langchain_openai import AzureChatOpenAI
+from langchain_openai import ChatOpenAI
 from langgraph.prebuilt import create_react_agent
 
 from agent.prompts import SYSTEM_PROMPT
 from agent.tools import compare_products, search_ads
 
-model = AzureChatOpenAI(
-    azure_deployment=os.environ["AZURE_OPENAI_DEPLOYMENT"],
-    api_version=os.environ.get("OPENAI_API_VERSION", "2024-10-21"),
-    temperature=0.3,
+# Azure AI Foundry resources expose the OpenAI-compatible *v1* surface
+# (<endpoint>/openai/v1/) instead of the legacy ?api-version= deployments
+# route, so we use ChatOpenAI with a base_url; `model` is the deployment name.
+_V1_BASE_URL = os.environ["AZURE_OPENAI_ENDPOINT"].rstrip("/") + "/openai/v1/"
+
+model = ChatOpenAI(
+    base_url=_V1_BASE_URL,
+    api_key=os.environ["AZURE_OPENAI_API_KEY"],
+    model=os.environ["AZURE_OPENAI_DEPLOYMENT"],
     streaming=True,
 )
 

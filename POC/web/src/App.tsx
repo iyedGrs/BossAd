@@ -11,7 +11,7 @@ export default function App() {
   );
   const [prefill, setPrefill] = useState("");
   const stream = useStream({
-    apiUrl: "http://localhost:2024",
+    apiUrl: import.meta.env.VITE_API_URL ?? "http://localhost:2024",
     assistantId: "agent",
     messagesKey: "messages",
     threadId,
