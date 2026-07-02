@@ -59,18 +59,18 @@ export function ThreadSidebar(props: {
   return (
     <nav className="flex w-[220px] shrink-0 flex-col border-r border-line">
       <div className="flex items-center justify-between border-b border-line px-4 py-4">
-        <span className="font-serif text-sm font-semibold tracking-tight text-ink">Threads</span>
+        <span className="font-mono text-[10px] font-semibold uppercase tracking-widest text-muted">Case files</span>
         <button
           onClick={props.onNew}
           title="New thread"
-          className="rounded px-2.5 py-1 text-xs font-medium text-muted transition-colors hover:text-accent"
+          className="rounded-md px-2 py-1 font-mono text-xs font-semibold text-muted transition-colors hover:bg-surface hover:text-accent"
         >
           +
         </button>
       </div>
       <div className="flex-1 overflow-y-auto">
         {threads.length === 0 && !loading && (
-          <p className="p-4 text-xs text-muted">No threads yet.</p>
+          <p className="p-4 font-mono text-[11px] text-muted/70">No cases yet.</p>
         )}
         <ul>
           {threads.map((t) => {
@@ -88,7 +88,7 @@ export function ThreadSidebar(props: {
                   <p className={`truncate text-xs font-medium transition-colors ${active ? "text-ink" : "text-ink/70"}`}>
                     {threadTitle(t)}
                   </p>
-                  <p className="mt-1 text-[10px] text-muted">{relativeTime(t.updated_at)}</p>
+                  <p className="mt-1 font-mono text-[10px] text-muted/70">{relativeTime(t.updated_at)}</p>
                 </button>
               </li>
             );

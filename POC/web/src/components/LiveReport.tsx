@@ -13,8 +13,9 @@ export function LiveReport({ markdown, isLoading }: { markdown: string; isLoadin
 
   if (!markdown && !isLoading) {
     return (
-      <div className="flex h-full items-center justify-center px-10">
-        <p className="font-serif text-3xl italic text-muted/60 text-center leading-relaxed max-w-sm">
+      <div className="flex h-full flex-col items-center justify-center gap-3 px-10">
+        <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted/50">standing by</span>
+        <p className="max-w-sm text-center font-display text-2xl leading-relaxed text-muted/70">
           Ask the archive for insights.
         </p>
       </div>

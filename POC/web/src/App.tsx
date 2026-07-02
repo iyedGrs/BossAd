@@ -43,38 +43,43 @@ export default function App() {
 
   return (
     <div className="flex h-screen flex-col">
-      <header className="border-b border-line px-6 py-4">
+      <header className="border-b border-line px-6 py-3.5">
         <div className="flex items-center justify-between">
-          <h1 className="font-serif text-xl font-semibold tracking-tight">
-            BossAd <span className="font-sans text-sm font-normal text-muted">Insight POC</span>
-          </h1>
+          <div className="flex items-baseline gap-3">
+            <h1 className="font-display text-lg font-semibold tracking-tight">
+              BOSSAD<span className="text-accent">//</span>
+              <span className="text-muted">SIGNAL DESK</span>
+            </h1>
+            <span className="hidden font-mono text-[10px] uppercase tracking-widest text-muted/60 sm:inline">
+              ad-intel console
+            </span>
+          </div>
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 text-xs text-muted">
-              <span className={`inline-block size-2 rounded-full transition-colors ${
-                status === "running" ? "pulse bg-accent" : status === "error" ? "bg-bad" : "bg-ok"
+            <div className="flex items-center gap-2 rounded-full border border-line px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest text-muted">
+              <span className={`inline-block size-1.5 rounded-full transition-colors ${
+                status === "running" ? "pulse led-live bg-accent text-accent" : status === "error" ? "bg-bad" : "bg-ok"
               }`} />
-              <span className="font-medium">{status}</span>
+              <span className="font-semibold">{status}</span>
             </div>
-            <div className="h-px w-px bg-line" />
             <button
               onClick={() => { sessionStorage.removeItem("poc-thread"); setThreadId(null); setPhases([]); }}
-              className="rounded px-3 py-1.5 text-xs font-medium text-muted transition-colors hover:text-ink hover:bg-surface/50"
+              className="rounded-md px-3 py-1.5 font-mono text-[11px] uppercase tracking-wide text-muted transition-colors hover:bg-surface hover:text-ink"
             >
               New thread
             </button>
             <button
               onClick={() => setTheme((t) => (t === "dark" ? "light" : "dark"))}
-              className="rounded px-3 py-1.5 text-xs font-medium text-muted transition-colors hover:text-ink hover:bg-surface/50"
+              className="rounded-md border border-line px-2.5 py-1.5 font-mono text-[11px] uppercase tracking-wide text-muted transition-colors hover:border-accent/50 hover:text-accent"
             >
-              {theme === "dark" ? "☀️ Light" : "🌙 Dark"}
+              {theme === "dark" ? "Light" : "Dark"}
             </button>
           </div>
         </div>
       </header>
 
       {stream.error != null && (
-        <div className="border-b border-bad/30 bg-bad/5 px-6 py-3 text-sm text-bad">
-          <span className="font-medium">Error:</span> {String((stream.error as Error).message ?? stream.error)} — is Aegra running on :2024?
+        <div className="border-b border-bad/30 bg-bad/5 px-6 py-3 font-mono text-xs text-bad">
+          <span className="font-semibold">ERROR //</span> {String((stream.error as Error).message ?? stream.error)} — is Aegra running on :2024?
         </div>
       )}
 
