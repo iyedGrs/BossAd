@@ -4,11 +4,9 @@ import { RunComposer } from "./components/RunComposer";
 import { AgentTimeline } from "./components/AgentTimeline";
 import { LiveReport } from "./components/LiveReport";
 import { ThreadSidebar } from "./components/ThreadSidebar";
-import { deriveReport, deriveTimeline } from "./lib/messages";
+import { deriveReport, deriveTimeline, mergeTimeline, type PhaseEvent } from "./lib/messages";
 
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:2024";
-
-type PhaseEvent = { phase: string; status: "start" | "done"; label: string };
 
 export default function App() {
   const [threadId, setThreadId] = useState<string | null>(
@@ -36,7 +34,7 @@ export default function App() {
     if (!stream.isLoading) setThreadListTick((n) => n + 1);
   }, [stream.isLoading]);
 
-  const timeline = deriveTimeline(stream.messages);
+  const timeline = mergeTimeline(deriveTimeline(stream.messages), phases);
   const report = deriveReport(stream.messages);
   const status = stream.error ? "error" : stream.isLoading ? "running" : "idle";
 
@@ -90,7 +88,7 @@ export default function App() {
             prefill={prefill}
             setPrefill={setPrefill}
           />
-          <AgentTimeline entries={timeline} phases={phases} />
+          <AgentTimeline entries={timeline} />
         </aside>
         <section className="min-w-0 flex-1">
           <LiveReport markdown={report} isLoading={stream.isLoading} />
