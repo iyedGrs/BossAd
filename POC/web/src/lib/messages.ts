@@ -2,12 +2,26 @@ import type { Message } from "@langchain/langgraph-sdk";
 
 export type TimelineEntry = {
   id: string;
-  kind: "plan" | "tool";
+  kind: "plan" | "tool" | "phase";
   label: string;
   args?: string;
   result?: string;
   status: "running" | "done";
+  subagent?: "market_scout" | "scoring_analyst" | "report_writer";
 };
+
+export type PhaseEvent = { phase: string; status: "start" | "done"; label: string };
+
+const SUBAGENT_BY_TOOL: Record<string, NonNullable<TimelineEntry["subagent"]>> = {
+  search_ads: "market_scout",
+  compare_products: "scoring_analyst",
+};
+
+const PHASE_ORDER: NonNullable<TimelineEntry["subagent"]>[] = [
+  "market_scout",
+  "scoring_analyst",
+  "report_writer",
+];
 
 const asText = (content: unknown): string =>
   typeof content === "string"
@@ -59,4 +73,31 @@ export function deriveReport(messages: Message[]): string {
     if (text.trim() && toolCalls.length === 0) return text;
   }
   return "";
+}
+
+/** Groups timeline entries by which subagent's tool they belong to (tool name
+ * uniquely identifies the subagent — search_ads only runs in market_scout,
+ * compare_products only in scoring_analyst) and interleaves each group with
+ * its phase-start marker, in the graph's fixed pipeline order. This relies on
+ * the pipeline order being deterministic (see agent/router.py decide_next),
+ * not on message/event arrival timing, since the two arrive on separate
+ * streams with no shared sequence key. */
+export function mergeTimeline(entries: TimelineEntry[], phases: PhaseEvent[]): TimelineEntry[] {
+  const startLabels = new Map(
+    phases.filter((p) => p.status === "start").map((p) => [p.phase, p.label] as const),
+  );
+  const tagged = entries.map((e) => ({
+    ...e,
+    subagent: e.kind === "tool" ? SUBAGENT_BY_TOOL[e.label] : undefined,
+  }));
+
+  const merged: TimelineEntry[] = tagged.filter((e) => !e.subagent && e.kind !== "tool");
+  for (const subagent of PHASE_ORDER) {
+    const label = startLabels.get(subagent);
+    if (label) {
+      merged.push({ id: `phase-${subagent}`, kind: "phase", label, status: "done", subagent });
+    }
+    merged.push(...tagged.filter((e) => e.subagent === subagent));
+  }
+  return merged;
 }
