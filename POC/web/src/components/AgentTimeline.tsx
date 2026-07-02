@@ -32,7 +32,7 @@ export function AgentTimeline({ entries }: { entries: TimelineEntry[] }) {
                 <span className="ml-auto text-xs text-muted">{open === e.id ? "−" : "+"}</span>
               </button>
               {open === e.id && (
-                <div className="border-t border-line px-3 py-2 font-mono text-[11px] leading-relaxed text-muted">
+                <div className="border-t border-line px-3 py-2 font-mono text-xs leading-relaxed text-muted">
                   <p className="mb-1 break-all"><span className="text-accent">args</span> {e.args}</p>
                   {e.result && (
                     <p className="max-h-40 overflow-auto break-all">
