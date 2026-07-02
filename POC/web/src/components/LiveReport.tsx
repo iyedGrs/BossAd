@@ -13,8 +13,10 @@ export function LiveReport({ markdown, isLoading }: { markdown: string; isLoadin
 
   if (!markdown && !isLoading) {
     return (
-      <div className="flex h-full items-center justify-center">
-        <p className="font-serif text-2xl italic text-muted">Ask the archive.</p>
+      <div className="flex h-full items-center justify-center px-10">
+        <p className="font-serif text-3xl italic text-muted/60 text-center leading-relaxed max-w-sm">
+          Ask the archive for insights.
+        </p>
       </div>
     );
   }
@@ -25,11 +27,13 @@ export function LiveReport({ markdown, isLoading }: { markdown: string; isLoadin
         const el = e.currentTarget;
         pinned.current = el.scrollHeight - el.scrollTop - el.clientHeight < 48;
       }}
-      className="h-full overflow-y-auto px-10 py-8"
+      className="h-full overflow-y-auto"
     >
-      <article className="report">
+      <article className="report px-12 py-10">
         <ReactMarkdown remarkPlugins={[remarkGfm]}>{markdown}</ReactMarkdown>
-        {isLoading && <span className="pulse ml-1 inline-block h-4 w-2 bg-accent align-text-bottom" />}
+        {isLoading && (
+          <span className="cursor-blink ml-1 inline-block h-5 w-px bg-accent align-text-bottom" />
+        )}
       </article>
     </div>
   );

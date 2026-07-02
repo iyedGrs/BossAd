@@ -57,20 +57,20 @@ export function ThreadSidebar(props: {
   }, [refresh, props.refreshKey]);
 
   return (
-    <nav className="flex w-[220px] shrink-0 flex-col border-r border-line bg-surface/40">
-      <div className="flex items-center justify-between border-b border-line px-3 py-3">
-        <span className="text-xs font-medium uppercase tracking-wide text-muted">Threads</span>
+    <nav className="flex w-[220px] shrink-0 flex-col border-r border-line">
+      <div className="flex items-center justify-between border-b border-line px-4 py-4">
+        <span className="font-serif text-sm font-semibold tracking-tight text-ink">Threads</span>
         <button
           onClick={props.onNew}
           title="New thread"
-          className="rounded border border-line px-1.5 py-0.5 text-xs text-muted hover:border-accent hover:text-ink"
+          className="rounded px-2.5 py-1 text-xs font-medium text-muted transition-colors hover:text-accent"
         >
-          + New
+          +
         </button>
       </div>
       <div className="flex-1 overflow-y-auto">
         {threads.length === 0 && !loading && (
-          <p className="p-3 text-xs text-muted">No threads yet.</p>
+          <p className="p-4 text-xs text-muted">No threads yet.</p>
         )}
         <ul>
           {threads.map((t) => {
@@ -79,16 +79,16 @@ export function ThreadSidebar(props: {
               <li key={t.thread_id}>
                 <button
                   onClick={() => props.onSelect(t.thread_id)}
-                  className={`block w-full border-b border-line/60 px-3 py-2.5 text-left transition-colors ${
+                  className={`block w-full border-b border-line/50 border-l-2 px-4 py-3 text-left transition-all ${
                     active
-                      ? "border-l-2 border-l-accent bg-accent/10"
-                      : "border-l-2 border-l-transparent hover:bg-surface"
+                      ? "border-l-accent bg-surface/60"
+                      : "border-l-transparent hover:bg-surface/30"
                   }`}
                 >
-                  <p className={`truncate text-xs ${active ? "text-ink" : "text-ink/80"}`}>
+                  <p className={`truncate text-xs font-medium transition-colors ${active ? "text-ink" : "text-ink/70"}`}>
                     {threadTitle(t)}
                   </p>
-                  <p className="mt-0.5 text-[10px] text-muted">{relativeTime(t.updated_at)}</p>
+                  <p className="mt-1 text-[10px] text-muted">{relativeTime(t.updated_at)}</p>
                 </button>
               </li>
             );

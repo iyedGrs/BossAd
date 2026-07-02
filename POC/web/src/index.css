@@ -14,22 +14,127 @@
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
 }
 
-html { background: var(--color-bg); color: var(--color-ink); }
-body { font-family: var(--font-sans); }
+[data-theme="light"] {
+  --color-bg: #f7f5f0;
+  --color-surface: #ffffff;
+  --color-line: #e2ded4;
+  --color-ink: #1c1a16;
+  --color-muted: #6b675e;
+  --color-accent: #a8791f;
+  --color-ok: #4d7a3a;
+  --color-bad: #a3392f;
+}
 
-@keyframes rise { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
-.entry-rise { animation: rise 150ms ease-out; }
+html { background: var(--color-bg); color: var(--color-ink); }
+body { font-family: var(--font-sans); line-height: 1.5; }
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+.entry-rise { animation: rise 200ms cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.entry-rise:nth-child(1) { animation-delay: 0ms; }
+.entry-rise:nth-child(2) { animation-delay: 40ms; }
+.entry-rise:nth-child(3) { animation-delay: 80ms; }
+.entry-rise:nth-child(n+4) { animation-delay: 120ms; }
+
 @keyframes pulse-dot { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
 .pulse { animation: pulse-dot 1.2s ease-in-out infinite; }
 
+@keyframes cursor-blink {
+  0%, 49%, 100% { opacity: 1; }
+  50%, 99% { opacity: 0.3; }
+}
+.cursor-blink { animation: cursor-blink 1s steps(1, end) infinite; }
+
 /* Report typography (react-markdown output) */
-.report { max-width: 68ch; }
-.report h1 { font-family: var(--font-serif); font-size: 2rem; font-weight: 600; line-height: 1.15; margin: 0 0 1rem; }
-.report h2 { font-family: var(--font-serif); font-size: 1.25rem; font-weight: 600; margin: 2rem 0 .6rem; padding-bottom: .35rem; border-bottom: 1px solid var(--color-line); }
-.report p, .report li { line-height: 1.65; color: var(--color-ink); }
-.report strong { color: var(--color-accent); font-weight: 600; }
-.report table { width: 100%; border-collapse: collapse; font-family: var(--font-mono); font-size: .8rem; margin: 1rem 0; }
-.report th { text-align: left; color: var(--color-muted); font-weight: 500; border-bottom: 1px solid var(--color-accent); padding: .4rem .6rem; }
-.report td { border-bottom: 1px solid var(--color-line); padding: .45rem .6rem; }
-.report ol { padding-left: 1.2rem; }
-.report code { font-family: var(--font-mono); font-size: .85em; color: var(--color-accent); }
+.report { max-width: 70ch; }
+.report h1 {
+  font-family: var(--font-serif);
+  font-size: 2rem;
+  font-weight: 600;
+  line-height: 1.2;
+  margin: 0 0 1.5rem;
+  letter-spacing: -0.01em;
+}
+.report h2 {
+  font-family: var(--font-serif);
+  font-size: 1.375rem;
+  font-weight: 600;
+  margin: 2.5rem 0 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid var(--color-accent);
+  letter-spacing: -0.01em;
+}
+.report h3 {
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 1.5rem 0 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-muted);
+}
+.report p, .report li {
+  line-height: 1.7;
+  color: var(--color-ink);
+  margin-bottom: 1rem;
+}
+.report li { margin-bottom: 0.5rem; }
+.report strong {
+  color: var(--color-accent);
+  font-weight: 600;
+}
+.report em { font-style: italic; opacity: 0.9; }
+.report table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  margin: 1.5rem 0;
+}
+.report th {
+  text-align: left;
+  color: var(--color-accent);
+  font-weight: 600;
+  border-bottom: 2px solid var(--color-accent);
+  padding: 0.75rem 0.875rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+}
+.report td {
+  border-bottom: 1px solid var(--color-line);
+  padding: 0.625rem 0.875rem;
+  color: var(--color-ink);
+}
+.report tbody tr:last-child td { border-bottom: none; }
+.report ol {
+  padding-left: 1.75rem;
+  margin-bottom: 1rem;
+}
+.report ul {
+  padding-left: 1.75rem;
+  margin-bottom: 1rem;
+}
+.report code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  color: var(--color-accent);
+  background: var(--color-surface);
+  padding: 0.15em 0.35em;
+  border-radius: 2px;
+}
+.report pre {
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: 4px;
+  padding: 1rem;
+  overflow-x: auto;
+  margin: 1rem 0;
+}
+.report pre code {
+  background: none;
+  color: var(--color-ink);
+  padding: 0;
+}

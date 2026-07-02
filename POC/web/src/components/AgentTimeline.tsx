@@ -25,38 +25,57 @@ function SubagentTag({ subagent }: { subagent?: TimelineEntry["subagent"] }) {
 export function AgentTimeline({ entries }: { entries: TimelineEntry[] }) {
   const [open, setOpen] = useState<string | null>(null);
   if (entries.length === 0)
-    return <p className="p-5 text-xs text-muted">Agent activity will appear here.</p>;
+    return (
+      <div className="flex flex-1 items-center justify-center p-5">
+        <p className="text-xs text-muted text-center">Agent activity will appear here.</p>
+      </div>
+    );
   return (
-    <ol className="space-y-1 p-4">
+    <ol className="p-5 space-y-0">
       {entries.map((e) => (
         <li key={e.id} className="entry-rise">
           {e.kind === "phase" ? (
-            <p className="flex items-center gap-2 py-1 text-xs text-muted">
-              <SubagentTag subagent={e.subagent} />
-              {e.label}
-            </p>
+            <div className="py-3 border-b border-line/40 last:border-b-0">
+              <p className="flex items-center gap-2 text-xs text-muted uppercase tracking-wide font-medium">
+                <SubagentTag subagent={e.subagent} />
+                <span>{e.label}</span>
+              </p>
+            </div>
           ) : e.kind === "plan" ? (
-            <p className="border-l-2 border-accent py-1 pl-3 font-serif text-sm italic text-ink">
-              {e.label}
-            </p>
+            <div className="py-4 border-l-3 border-accent pl-4 mb-1">
+              <p className="font-serif text-sm italic text-ink leading-relaxed">
+                {e.label}
+              </p>
+            </div>
           ) : (
-            <div className="rounded-md border border-line bg-surface">
+            <div className="mb-2">
               <button
                 onClick={() => setOpen(open === e.id ? null : e.id)}
-                className="flex w-full items-center gap-2 px-3 py-2 text-left"
+                className="w-full group rounded border border-line bg-surface/50 hover:bg-surface transition-colors"
               >
-                <Chip status={e.status} />
-                <SubagentTag subagent={e.subagent} />
-                <code className="font-mono text-xs text-ink">{e.label}</code>
-                <span className="ml-auto text-xs text-muted">{open === e.id ? "−" : "+"}</span>
+                <div className="flex items-center gap-3 px-3 py-2.5 text-left">
+                  <Chip status={e.status} />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-0.5">
+                      <SubagentTag subagent={e.subagent} />
+                      <code className="font-mono text-xs text-ink truncate">{e.label}</code>
+                    </div>
+                  </div>
+                  <span className="text-xs text-muted flex-shrink-0 group-hover:text-accent transition-colors">
+                    {open === e.id ? "−" : "+"}
+                  </span>
+                </div>
               </button>
               {open === e.id && (
-                <div className="border-t border-line px-3 py-2 font-mono text-xs leading-relaxed text-muted">
-                  <p className="mb-1 break-all"><span className="text-accent">args</span> {e.args}</p>
+                <div className="mt-1 rounded border border-line border-t-0 bg-surface/30 px-3 py-2 font-mono text-xs leading-relaxed text-muted max-h-64 overflow-auto">
+                  <div className="mb-1 space-y-1 break-all">
+                    <div><span className="text-accent font-medium">args</span> <span className="text-ink">{e.args}</span></div>
+                  </div>
                   {e.result && (
-                    <p className="max-h-40 overflow-auto break-all">
-                      <span className="text-accent">result</span> {e.result.slice(0, 1500)}
-                    </p>
+                    <div className="pt-1 border-t border-line/40 mt-1 space-y-1 break-all">
+                      <div><span className="text-accent font-medium">result</span></div>
+                      <div className="text-ink">{e.result.slice(0, 1500)}</div>
+                    </div>
                   )}
                 </div>
               )}
