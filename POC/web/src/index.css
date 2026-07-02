@@ -1,1 +1,35 @@
 @import "tailwindcss";
+
+@theme {
+  --color-bg: #0b0d10;
+  --color-surface: #12151a;
+  --color-line: #232830;
+  --color-ink: #e8e6e1;
+  --color-muted: #8a9099;
+  --color-accent: #d4a843;
+  --color-ok: #7fb069;
+  --color-bad: #c4554d;
+  --font-serif: "Newsreader", ui-serif, serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+html { background: var(--color-bg); color: var(--color-ink); }
+body { font-family: var(--font-sans); }
+
+@keyframes rise { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+.entry-rise { animation: rise 150ms ease-out; }
+@keyframes pulse-dot { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
+.pulse { animation: pulse-dot 1.2s ease-in-out infinite; }
+
+/* Report typography (react-markdown output) */
+.report { max-width: 68ch; }
+.report h1 { font-family: var(--font-serif); font-size: 2rem; font-weight: 600; line-height: 1.15; margin: 0 0 1rem; }
+.report h2 { font-family: var(--font-serif); font-size: 1.25rem; font-weight: 600; margin: 2rem 0 .6rem; padding-bottom: .35rem; border-bottom: 1px solid var(--color-line); }
+.report p, .report li { line-height: 1.65; color: var(--color-ink); }
+.report strong { color: var(--color-accent); font-weight: 600; }
+.report table { width: 100%; border-collapse: collapse; font-family: var(--font-mono); font-size: .8rem; margin: 1rem 0; }
+.report th { text-align: left; color: var(--color-muted); font-weight: 500; border-bottom: 1px solid var(--color-accent); padding: .4rem .6rem; }
+.report td { border-bottom: 1px solid var(--color-line); padding: .45rem .6rem; }
+.report ol { padding-left: 1.2rem; }
+.report code { font-family: var(--font-mono); font-size: .85em; color: var(--color-accent); }
