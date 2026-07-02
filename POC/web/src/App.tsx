@@ -8,12 +8,15 @@ import { deriveReport, deriveTimeline } from "./lib/messages";
 
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:2024";
 
+type PhaseEvent = { phase: string; status: "start" | "done"; label: string };
+
 export default function App() {
   const [threadId, setThreadId] = useState<string | null>(
     () => sessionStorage.getItem("poc-thread"),
   );
   const [prefill, setPrefill] = useState("");
   const [threadListTick, setThreadListTick] = useState(0);
+  const [phases, setPhases] = useState<PhaseEvent[]>([]);
   const stream = useStream({
     apiUrl: API_URL,
     assistantId: "agent",
@@ -22,6 +25,9 @@ export default function App() {
     onThreadId: (id) => {
       setThreadId(id);
       if (id) sessionStorage.setItem("poc-thread", id);
+    },
+    onCustomEvent: (event) => {
+      setPhases((prev) => [...prev, event as PhaseEvent]);
     },
     reconnectOnMount: true,
   });
@@ -46,7 +52,7 @@ export default function App() {
           }`} />
           {status}
           <button
-            onClick={() => { sessionStorage.removeItem("poc-thread"); setThreadId(null); }}
+            onClick={() => { sessionStorage.removeItem("poc-thread"); setThreadId(null); setPhases([]); }}
             className="ml-3 rounded border border-line px-2 py-0.5 hover:text-ink"
           >
             New thread
@@ -68,10 +74,12 @@ export default function App() {
           onSelect={(id) => {
             setThreadId(id);
             sessionStorage.setItem("poc-thread", id);
+            setPhases([]);
           }}
           onNew={() => {
             sessionStorage.removeItem("poc-thread");
             setThreadId(null);
+            setPhases([]);
           }}
         />
         <aside className="flex w-[380px] shrink-0 flex-col overflow-y-auto border-r border-line">
@@ -82,7 +90,7 @@ export default function App() {
             prefill={prefill}
             setPrefill={setPrefill}
           />
-          <AgentTimeline entries={timeline} />
+          <AgentTimeline entries={timeline} phases={phases} />
         </aside>
         <section className="min-w-0 flex-1">
           <LiveReport markdown={report} isLoading={stream.isLoading} />
