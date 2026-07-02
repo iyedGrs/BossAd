@@ -35,7 +35,15 @@ async def main() -> int:
             # bare "ai") with content split token-by-token, keyed by a stable "id".
             # Chunks must be accumulated by id to recover full message text.
             if msg.get("type") in ("ai", "AIMessageChunk") and isinstance(msg.get("content"), str) and msg["content"]:
-                msg_id = msg.get("id") or msg["content"]
+                msg_id = msg.get("id")
+                if not msg_id:
+                    # No stable id to group chunks by: don't fall back to keying by
+                    # content, which would silently inflate ok_mid_run by counting
+                    # every distinct token chunk as its own "message". Skip instead,
+                    # and warn loudly since this is a fail-fast diagnostic script.
+                    print(f"WARNING: AI message chunk missing id, skipping: {msg['content']!r}",
+                          file=sys.stderr)
+                    continue
                 ai_text_by_id[msg_id] = ai_text_by_id.get(msg_id, "") + msg["content"]
 
     ai_message_texts = list(ai_text_by_id.values())
