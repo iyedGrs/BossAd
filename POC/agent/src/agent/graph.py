@@ -33,8 +33,8 @@ model = ChatOpenAI(
 
 import json
 
-from langchain_core.callbacks.manager import adispatch_custom_event
 from langchain_core.messages import AIMessage
+from langgraph.config import get_stream_writer
 from langgraph.graph import END, START, StateGraph
 
 from agent.extract import extract_tool_json
@@ -56,8 +56,8 @@ async def supervisor_node(state: AgentState) -> dict:
     next_phase = decide_next(state)
     if next_phase == "end":
         return {}
-    await adispatch_custom_event("phase", {"phase": next_phase, "status": "start",
-                                            "label": _PHASE_LABELS[next_phase]})
+    writer = get_stream_writer()
+    writer({"phase": next_phase, "status": "start", "label": _PHASE_LABELS[next_phase]})
     return {"messages": [AIMessage(content=_PHASE_LABELS[next_phase])]}
 
 
@@ -69,8 +69,9 @@ async def market_scout_node(state: AgentState) -> dict:
     result = await _scout_agent.ainvoke({"messages": state["messages"]})
     new_messages = result["messages"][len(state["messages"]):]
     search_results = extract_tool_json(new_messages, "search_ads") or []
-    await adispatch_custom_event("phase", {"phase": "market_scout", "status": "done",
-                                            "label": f"Found {len(search_results)} candidate ads"})
+    writer = get_stream_writer()
+    writer({"phase": "market_scout", "status": "done",
+             "label": f"Found {len(search_results)} candidate ads"})
     return {"messages": new_messages, "search_results": search_results}
 
 
@@ -78,8 +79,9 @@ async def scoring_analyst_node(state: AgentState) -> dict:
     result = await _analyst_agent.ainvoke({"messages": state["messages"]})
     new_messages = result["messages"][len(state["messages"]):]
     scores = extract_tool_json(new_messages, "compare_products") or []
-    await adispatch_custom_event("phase", {"phase": "scoring_analyst", "status": "done",
-                                            "label": f"Scored {len(scores)} products"})
+    writer = get_stream_writer()
+    writer({"phase": "scoring_analyst", "status": "done",
+             "label": f"Scored {len(scores)} products"})
     return {"messages": new_messages, "scores": scores}
 
 
@@ -87,8 +89,8 @@ async def report_writer_node(state: AgentState) -> dict:
     response = await model.ainvoke(
         [{"role": "system", "content": WRITER_PROMPT}, *state["messages"]]
     )
-    await adispatch_custom_event("phase", {"phase": "report_writer", "status": "done",
-                                            "label": "Report complete"})
+    writer = get_stream_writer()
+    writer({"phase": "report_writer", "status": "done", "label": "Report complete"})
     return {"messages": [response], "report_done": True}
 
 
