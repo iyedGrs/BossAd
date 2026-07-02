@@ -7,7 +7,7 @@ import sys
 
 from langgraph_sdk import get_client
 
-
+# make client url dynamic in case running a pipline 
 async def main() -> int:
     client = get_client(url="http://localhost:2024")
     thread = await client.threads.create()
