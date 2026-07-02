@@ -1,17 +1,21 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useStream } from "@langchain/langgraph-sdk/react";
 import { RunComposer } from "./components/RunComposer";
 import { AgentTimeline } from "./components/AgentTimeline";
 import { LiveReport } from "./components/LiveReport";
+import { ThreadSidebar } from "./components/ThreadSidebar";
 import { deriveReport, deriveTimeline } from "./lib/messages";
+
+const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:2024";
 
 export default function App() {
   const [threadId, setThreadId] = useState<string | null>(
     () => sessionStorage.getItem("poc-thread"),
   );
   const [prefill, setPrefill] = useState("");
+  const [threadListTick, setThreadListTick] = useState(0);
   const stream = useStream({
-    apiUrl: import.meta.env.VITE_API_URL ?? "http://localhost:2024",
+    apiUrl: API_URL,
     assistantId: "agent",
     messagesKey: "messages",
     threadId,
@@ -21,6 +25,10 @@ export default function App() {
     },
     reconnectOnMount: true,
   });
+
+  useEffect(() => {
+    if (!stream.isLoading) setThreadListTick((n) => n + 1);
+  }, [stream.isLoading]);
 
   const timeline = deriveTimeline(stream.messages);
   const report = deriveReport(stream.messages);
@@ -53,6 +61,19 @@ export default function App() {
       )}
 
       <div className="flex min-h-0 flex-1">
+        <ThreadSidebar
+          apiUrl={API_URL}
+          activeThreadId={threadId}
+          refreshKey={threadListTick}
+          onSelect={(id) => {
+            setThreadId(id);
+            sessionStorage.setItem("poc-thread", id);
+          }}
+          onNew={() => {
+            sessionStorage.removeItem("poc-thread");
+            setThreadId(null);
+          }}
+        />
         <aside className="flex w-[380px] shrink-0 flex-col overflow-y-auto border-r border-line">
           <RunComposer
             isLoading={stream.isLoading}
