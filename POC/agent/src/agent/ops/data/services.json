@@ -1,0 +1,7 @@
+[
+  {"name": "api-gateway", "status": "healthy", "replicas": 3, "version": "2.14.0", "uptime_pct": 99.95, "error_rate_pct": 0.2},
+  {"name": "checkout-service", "status": "degraded", "replicas": 2, "version": "1.9.3", "uptime_pct": 98.1, "error_rate_pct": 4.8},
+  {"name": "payments-worker", "status": "healthy", "replicas": 4, "version": "3.2.1", "uptime_pct": 99.99, "error_rate_pct": 0.05},
+  {"name": "auth-service", "status": "healthy", "replicas": 2, "version": "1.4.0", "uptime_pct": 99.8, "error_rate_pct": 0.3},
+  {"name": "search-index", "status": "down", "replicas": 0, "version": "0.9.7", "uptime_pct": 82.0, "error_rate_pct": 100.0}
+]
