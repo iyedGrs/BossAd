@@ -27,6 +27,7 @@ function relativeTime(iso: string): string {
 
 export function ThreadSidebar(props: {
   apiUrl: string;
+  assistantId: string;
   activeThreadId: string | null;
   refreshKey: number;
   onSelect: (id: string) => void;
@@ -43,6 +44,7 @@ export function ThreadSidebar(props: {
         limit: 50,
         sortBy: "updated_at",
         sortOrder: "desc",
+        metadata: { graph_id: props.assistantId },
       });
       setThreads(result);
     } catch {
@@ -50,7 +52,7 @@ export function ThreadSidebar(props: {
     } finally {
       setLoading(false);
     }
-  }, [props.apiUrl]);
+  }, [props.apiUrl, props.assistantId]);
 
   useEffect(() => {
     refresh();
