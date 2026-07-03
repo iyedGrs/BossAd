@@ -117,7 +117,7 @@ cd POC/agent
 uv run pytest tests/ -v
 ```
 
-All 6 tests should pass without a running server or real Azure credentials (tools operate on the mock dataset only).
+All 36 tests should pass without a running server or real Azure credentials (tools operate on mock data only).
 
 ---
 
@@ -217,3 +217,35 @@ Fix: find and stop the process using port 2024, or pick a different port and upd
 - Run all commands in PowerShell or Git Bash; `uv` works on Windows natively.
 - Docker Desktop must be in Linux-container mode (default on Windows).
 - If `pip install uv` is blocked by corporate policy, install `uv` via the official installer: `winget install astral-sh.uv`.
+
+---
+
+## 7. Ops Desk — a second showcase page
+
+A second page (`/ops` in the same frontend, nav link in the top bar) demonstrates interactive LangGraph/agent-UI techniques that don't fit the Ad Insight product story: a hand-rolled tool-calling loop (no `create_react_agent`), a live "thinking" stream, human-in-the-loop approval of risky actions, live skill badges, and checkpoint-based time-travel. It plays a different, unrelated character — an on-call assistant for a small mock service fleet — purely to showcase the techniques, not a BossAd feature.
+
+### What it shows
+
+- **Hand-rolled graph** (`POC/agent/src/agent/ops/ops_graph.py`): a plain `agent ⇄ tools` `StateGraph`, no LangChain prebuilt agent wrapper.
+- **Live thinking stream**: the model calls a `think` tool before every other action; the UI renders those calls as italic asides, streamed live.
+- **HITL approval**: `restart_service`, `scale_service`, and `rollback_deploy` call `interrupt()` before running. The UI shows an Approve/Deny card; denying records the denial without mutating the mock fleet.
+- **Live fleet board**: the right-hand panel updates from a server-emitted snapshot after every tool call — never guessed client-side.
+- **Skill badges**: each tool call is tagged `DIAGNOSTICS`, `SCALING`, or `RECOVERY` based on which tool ran.
+- **Time-travel**: edit a past message and resubmit to fork the thread — this is `useStream`'s built-in checkpoint branching (`history`, `branch`, `setBranch`), not custom code.
+
+### Try it
+
+With both servers running (§3 above), open `http://localhost:5173/ops` and ask something like *"checkout-service is showing a high error rate, can you look into it?"*. Approve the resulting restart request and watch the fleet board update; start a fresh thread and try denying one instead.
+
+### Smoke test
+
+```bash
+cd POC/agent
+uv run python ../scripts/smoke_ops.py
+```
+
+Drives a run into a risky tool call on two separate threads — one resumed with approve, one with deny — and asserts both the interrupt and the resume behaved correctly.
+
+### Note on existing threads
+
+Thread lists are now filtered per page via thread metadata (`graph_id`), tagged the moment a thread is created. Ad Insight threads created before this feature shipped predate that tag and won't appear in the (now-filtered) sidebar — a one-time, expected side effect of adding a second graph to a single-graph POC's Postgres data.
